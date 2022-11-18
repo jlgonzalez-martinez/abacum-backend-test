@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import List
 from unittest.mock import MagicMock
 
 import pytest
@@ -25,13 +26,14 @@ class TestCsvTransactionsLoaderService:
     def service(self, logger, unit_of_work) -> CsvTransactionsLoaderService:
         return CsvTransactionsLoaderService(logger, unit_of_work)
 
-    @pytest.fixture
-    def csv_path(self) -> str:
-        return os.path.join(TEST_RESOURCES, "data.csv")
+    @pytest.fixture(scope="class")
+    def csv_content(self) -> List[str]:
+        with open(os.path.join(TEST_RESOURCES, "data.csv"), "r") as f:
+            return f.readlines()
 
-    def test_load_transactions_from_csv(self, csv_path, service, unit_of_work):
+    def test_load_transactions_from_csv(self, csv_content, service, unit_of_work):
         """Test that loading transactions from a csv file persists the transactions."""
-        service(LoadTransactionsFromCSV(csv_file=csv_path))
+        service(LoadTransactionsFromCSV(csv_content=csv_content))
 
         expected = [
             Transaction(
