@@ -15,7 +15,8 @@ bus = bootstrap()
 @click.argument("filename", type=click.Path(exists=True))
 def load_transactions_from_csv(filename):
     """Load transactions from a CSV file."""
-    bus.handle(LoadTransactionsFromCSV(filename))
+    with open(filename, "r") as f:
+        bus.handle(LoadTransactionsFromCSV(f.readlines()))
 
 
 if __name__ == "__main__":

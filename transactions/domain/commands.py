@@ -1,6 +1,6 @@
 """Commands module, this module contains all the transaction commands."""
 from dataclasses import dataclass
-from typing import Union
+from typing import List
 
 
 class Command:
@@ -13,4 +13,4 @@ class Command:
 class LoadTransactionsFromCSV(Command):
     """Load command"""
 
-    csv_file: Union[str, bytearray]
+    csv_content: List[str]

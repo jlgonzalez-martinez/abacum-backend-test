@@ -19,12 +19,11 @@ class CsvTransactionsLoaderService:
 
     def __call__(self, cmd: "LoadTransactionsFromCSV"):
         with self._uow:
-            with open(cmd.csv_file, "r") as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=",")
-                _ = next(csv_reader)  # skip header
-                for date, account, amount in csv_reader:
-                    date = datetime.strptime(date, "%Y-%m-%d")
-                    amount = float(amount)
-                    transaction = Transaction(date=date, account=account, amount=amount)
-                    self._uow.transactions.add(transaction)
+            csv_reader = csv.reader(cmd.csv_content, delimiter=",")
+            _ = next(csv_reader)  # skip header
+            for date, account, amount in csv_reader:
+                date = datetime.strptime(date, "%Y-%m-%d")
+                amount = float(amount)
+                transaction = Transaction(date=date, account=account, amount=amount)
+                self._uow.transactions.add(transaction)
             self._uow.commit()

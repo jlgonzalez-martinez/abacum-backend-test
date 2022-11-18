@@ -10,7 +10,8 @@ from sqlalchemy import (
     Float,
     DateTime,
 )
-from sqlalchemy.orm import mapper
+from sqlalchemy.orm import mapper, class_mapper
+from sqlalchemy.orm.exc import UnmappedError
 
 from transactions.domain.models import Transaction
 
@@ -32,4 +33,14 @@ transactions = Table(
 def start_mappers():
     """Start ORM mappers with the domain model classes."""
     logger.info("Starting ORM mappers")
-    mapper(Transaction, transactions)
+    if not exist_mapper(Transaction):
+        mapper(Transaction, transactions)
+
+
+def exist_mapper(klass) -> bool:
+    """Check if the ORM mappers have been started."""
+    try:
+        class_mapper(klass)
+        return True
+    except UnmappedError:
+        return False
