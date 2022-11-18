@@ -1,0 +1,15 @@
+default:
+  database:
+    user: "abacumuser"
+    password: "abacumpass"
+    host: "localhost"
+    port: "5432"
+    database: "abacum"
+
+testing:
+  database:
+    user: "abacumuser"
+    password: "abacumpass"
+    host: "localhost"
+    port: "5432"
+    database: "abacumtest"

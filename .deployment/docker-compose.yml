@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  postgres:
+    container_name: abacum-postgres
+    image: postgres:13-bullseye
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=abacumpass
+      - POSTGRES_USER=abacumuser
+      - POSTGRES_DB=abacum
+      - CONN_MAX_AGE=60
+    ports:
+      - "5432:5432"
+    networks:
+      - abacum-network
+
+networks:
+  abacum-network: {}
+
+volumes:
+  postgres_data: {}
