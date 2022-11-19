@@ -1,0 +1,17 @@
+name: Continuous integration
+
+on:
+  pull_request:
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  lint:
+    uses: ./.github/workflows/lint.yml
+    needs: build
+  unit-test:
+    uses: ./.github/workflows/unit-test.yml
+    needs: lint
+  integration-test:
+    uses: ./.github/workflows/integration-test.yml
+    needs: lint
+
