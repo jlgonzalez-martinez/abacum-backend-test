@@ -1,11 +1,16 @@
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers
+from sqlalchemy.orm import (
+    sessionmaker,
+    clear_mappers,
+    scoped_session,
+    close_all_sessions,
+)
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from tenacity import retry, stop_after_delay
 
-from transactions.adapters.orm import metadata, start_mappers
 from config import settings
+from transactions.adapters.orm import metadata, start_mappers
 
 
 @pytest.fixture
@@ -33,15 +38,15 @@ def postgres_db():
     wait_for_postgres_to_come_up(engine)
     metadata.create_all(engine)
     yield engine
+    close_all_sessions()
     metadata.drop_all(engine)
     drop_database(postgres_url)
 
 
 @pytest.fixture
-def postgres_session_factory(postgres_db):
-    yield sessionmaker(bind=postgres_db)
-
-
-@pytest.fixture
-def postgres_session(postgres_session_factory):
-    return postgres_session_factory()
+def db_session(postgres_db):
+    session = scoped_session(
+        sessionmaker(autocommit=False, autoflush=False, bind=postgres_db)
+    )
+    yield session
+    session.close()
