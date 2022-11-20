@@ -15,7 +15,19 @@ services:
       - "5432:5432"
     networks:
       - abacum-network
-
+  api:
+    container_name: abacum-api
+    environment:
+      - ABACUM_DATABASE__HOST=postgres
+    build: ../
+    volumes:
+      - ..:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - abacum-network
 networks:
   abacum-network: {}
 
