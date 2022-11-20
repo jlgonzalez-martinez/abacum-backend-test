@@ -17,3 +17,11 @@
 - Run ```docker build -t abacum-api .``` to build the docker image of the api.
 - After configuring kubernetes with docker-desktop you can run  ```helm install bgapp -f values/00-local-values.yaml bgapp-0.1.0.tgz```
 
+## Run modes:
+1.- PostgreSQL:
+- Stores the data in a transactions table in PostgreSQL.
+- To set it it's neccesary to change the backend config to ```sqlalchemy```.
+
+2.- Pandas:
+- Stores the data in a transactions pandas dataframe to use pandas like the test suggests (Like we are persisting it in the filesystem it will have concurrency problems).
+- To set it it's neccesary to change the backend config to ```pandas```.
