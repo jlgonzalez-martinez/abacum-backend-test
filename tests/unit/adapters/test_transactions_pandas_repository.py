@@ -22,7 +22,7 @@ class TestTransactionPandasRepository:
         return TransactionPandasRepository(dataframe)
 
     def test_add(self, transactions_repository):
-        """Test add method."""
+        """Test add method add a new transaction."""
         transaction = Transaction(
             amount=4.0, account="68100000", date=datetime(2020, 8, 15)
         )
@@ -39,7 +39,7 @@ class TestTransactionPandasRepository:
         )
 
     def test_all(self, transactions_repository):
-        """Test all method."""
+        """Test all method return all the transactions."""
         transaction = Transaction(
             amount=4.0, account="68100000", date=datetime(2020, 8, 15)
         )

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - env:
+            - name: ABACUM_DATABASE__DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__DATABASE
+                  name: env-configmap
+            - name: ABACUM_DATABASE__USER
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__USER
+                  name: env-configmap
+            - name: ABACUM_DATABASE__PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__PASSWORD
+                  name: env-configmap
+            - name: ABACUM_DATABASE__HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__HOST
+                  name: env-configmap
+            - name: ABACUM_DATABASE__PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__PORT
+                  name: env-configmap
+            - name: ABACUM_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_BACKEND
+                  name: env-configmap
+          image: abacum-api
+          imagePullPolicy: IfNotPresent
+          name: abacum-api
+          ports:
+            - containerPort: 8000
+          resources: {}
+          volumeMounts:
+            - mountPath: /app
+              name: abacum-api-claim
+      restartPolicy: Always
+      volumes:
+        - name: abacum-api-claim
+          persistentVolumeClaim:
+            claimName: abacum-api-claim

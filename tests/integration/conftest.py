@@ -1,3 +1,5 @@
+import os.path
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
@@ -9,7 +11,7 @@ from sqlalchemy.orm import (
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from tenacity import retry, stop_after_delay
 
-from config import settings
+from config import settings, RESOURCES
 from transactions.adapters.orm import metadata, start_mappers
 
 
@@ -52,3 +54,11 @@ def db_session(postgres_db):
     session.commit()
     yield session
     session.close()
+
+
+@pytest.fixture
+def clean_pandas_file():
+    """Clean the pandas from the file storage."""
+    pandas_file = os.path.join(RESOURCES, settings.pandas.file)
+    if os.path.exists(pandas_file):
+        os.remove(pandas_file)
