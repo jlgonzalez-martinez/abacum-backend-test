@@ -7,10 +7,11 @@ from click.testing import CliRunner
 from config import TEST_RESOURCES, settings
 from transactions.domain.models import Transaction
 from transactions.entrypoints.cli_application import load_transactions_from_csv
-from transactions.services.unit_of_work import SqlAlchemyUnitOfWork
+from transactions.services.unit_of_work.unit_of_work_factory import UnitOfWorkFactory
 
 
 @pytest.mark.usefixtures("postgres_db")
+@pytest.mark.usefixtures("clean_pandas_file")
 @pytest.mark.integration
 class TestLoadFromCSVCLI:
     """Test the load_from_csv CLI command."""
@@ -23,13 +24,10 @@ class TestLoadFromCSVCLI:
     def runner(self):
         return CliRunner()
 
-    @pytest.fixture(scope="class")
-    def uow(self):
-        return SqlAlchemyUnitOfWork()
-
-    def test_load_from_csv_cli(self, csv_path, runner, uow):
-        """Test the load_from_csv CLI command."""
-        settings.backend = "sqlalchemy"
+    @pytest.mark.parametrize("backend", ["sqlalchemy", "pandas"])
+    def test_load_from_csv_cli(self, csv_path, runner, backend):
+        """Test the load_from_csv CLI command load correctly a CSV file."""
+        settings.backend = backend
 
         result = runner.invoke(load_transactions_from_csv, [csv_path])
         expected = [
@@ -40,7 +38,7 @@ class TestLoadFromCSVCLI:
                 date=datetime(2020, 10, 26), account="52000012", amount=176450.62
             ),
         ]
-        with uow:
+        with UnitOfWorkFactory.from_config() as uow:
             assert all(
                 transaction in expected for transaction in uow.transactions.all()
             )

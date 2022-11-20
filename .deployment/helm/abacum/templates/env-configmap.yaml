@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-configmap
+data:
+  ABACUM_DATABASE__DATABASE: '{{ .Values.database.name }}'
+  ABACUM_DATABASE__USER:  '{{ .Values.database.user }}'
+  ABACUM_DATABASE__PASSWORD:  '{{ .Values.database.password }}'
+  ABACUM_DATABASE__HOST: '{{ .Values.database.host }}'
+  ABACUM_DATABASE__PORT: '{{ .Values.database.port }}'
+  ABACUM_BACKEND: '{{ .Values.backend }}'
+  CONN_MAX_AGE: '{{ .Values.database.conn_max_age }}'
+

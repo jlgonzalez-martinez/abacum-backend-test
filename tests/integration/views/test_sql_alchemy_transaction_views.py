@@ -12,7 +12,6 @@ class TestSqlAlchemyTransactionViews:
 
     @pytest.fixture(autouse=True)
     def add_test_transactions(self, db_session, mappers):
-        """"""
         db_session.begin()
 
         db_session.add(
@@ -41,6 +40,7 @@ class TestSqlAlchemyTransactionViews:
         return SqlAlchemyTransactionViews()
 
     def test_group_by_account(self, transaction_views):
+        """Test the group_by_account view."""
         result = transaction_views.group_by_account()
 
         assert result == [
@@ -49,12 +49,13 @@ class TestSqlAlchemyTransactionViews:
         ]
 
     def test_group_by_account_for_specific_account(self, transaction_views):
+        """Test the group_by_account view filtering a specific account."""
         result = transaction_views.group_by_account(account="68100000")
 
         assert result == [("68100000", 25.0)]
 
     def test_group_by_account_and_month(self, transaction_views):
-
+        """Test the monthly_balance endpoint grouping by account and month."""
         result = transaction_views.group_by_account_and_month()
 
         assert result == [
@@ -65,7 +66,7 @@ class TestSqlAlchemyTransactionViews:
         ]
 
     def test_group_by_account_and_month_specific_account(self, transaction_views):
-        """Test the monthly_balance endpoint."""
+        """Test the monthly_balance endpoint grouping by account and month, filtering by account."""
         result = transaction_views.group_by_account_and_month(account="68100000")
 
         assert result == [
@@ -74,6 +75,7 @@ class TestSqlAlchemyTransactionViews:
         ]
 
     def test_monthly_balance_specific_account_and_month(self, transaction_views):
+        """Test the monthly_balance endpoint grouping by account and month, filtering by account and month."""
         result = transaction_views.group_by_account_and_month(
             account="68100000", month=9
         )
@@ -83,7 +85,7 @@ class TestSqlAlchemyTransactionViews:
         ]
 
     def test_monthly_balance_specific_month(self, transaction_views):
-
+        """Test the monthly_balance endpoint grouping by account and month, filtering by account and month."""
         result = transaction_views.group_by_account_and_month(month=9)
 
         assert result == [

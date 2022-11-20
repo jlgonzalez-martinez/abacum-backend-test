@@ -8,10 +8,11 @@ from config import TEST_RESOURCES, settings
 from transactions.bootstrap import bootstrap
 from transactions.domain.models import Transaction
 from transactions.entrypoints.fastapi_application import app
-from transactions.services.unit_of_work import SqlAlchemyUnitOfWork
+from transactions.services.unit_of_work.unit_of_work_factory import UnitOfWorkFactory
 
 
 @pytest.mark.usefixtures("postgres_db")
+@pytest.mark.usefixtures("clean_pandas_file")
 @pytest.mark.integration
 class TestLoadCsvEndpoint:
     """Test the load_csv endpoint."""
@@ -24,13 +25,10 @@ class TestLoadCsvEndpoint:
     def csv_path(self) -> str:
         return os.path.join(TEST_RESOURCES, "data.csv")
 
-    @pytest.fixture(scope="class")
-    def uow(self):
-        return SqlAlchemyUnitOfWork()
-
-    def test_load_csv_endpoint(self, client, csv_path, uow):
-        """Test the load_csv endpoint."""
-        settings.backend = "sqlalchemy"
+    @pytest.mark.parametrize("backend", ["sqlalchemy", "pandas"])
+    def test_load_csv_endpoint(self, client, csv_path, backend):
+        """Test the load_csv endpoint load correctly a CSV file."""
+        settings.backend = backend
         app.bus = bootstrap()
 
         response = client.post(
@@ -45,7 +43,7 @@ class TestLoadCsvEndpoint:
             ),
         ]
         assert response.status_code == 200
-        with uow:
+        with UnitOfWorkFactory.from_config() as uow:
             assert all(
                 transaction in expected for transaction in uow.transactions.all()
             )

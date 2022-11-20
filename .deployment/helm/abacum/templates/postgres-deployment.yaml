@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+        labels:
+            app: postgres
+    spec:
+      containers:
+        - env:
+            - name: CONN_MAX_AGE
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_MAX_AGE
+                  name: env-configmap
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__DATABASE
+                  name: env-configmap
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__PASSWORD
+                  name: env-configmap
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: ABACUM_DATABASE__USER
+                  name: env-configmap
+          image: postgres:13-bullseye
+          name: abacum-postgres
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: abacum-postgres-data-local
+      restartPolicy: Always
+      volumes:
+        - name: abacum-postgres-data-local
+          persistentVolumeClaim:
+            claimName: abacum-postgres-claim
