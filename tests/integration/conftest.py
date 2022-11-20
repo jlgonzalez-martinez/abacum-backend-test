@@ -48,5 +48,7 @@ def db_session(postgres_db):
     session = scoped_session(
         sessionmaker(autocommit=False, autoflush=False, bind=postgres_db)
     )
+    session.execute("DELETE FROM transactions")
+    session.commit()
     yield session
     session.close()

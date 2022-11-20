@@ -14,6 +14,7 @@ class TestSqlAlchemyTransactionViews:
     def add_test_transactions(self, db_session, mappers):
         """"""
         db_session.begin()
+
         db_session.add(
             Transaction(date=datetime(2020, 8, 15), account="68100000", amount=10)
         )
