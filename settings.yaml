@@ -1,15 +1,21 @@
 default:
+  backend: "pandas"
   database:
     user: "abacumuser"
     password: "abacumpass"
     host: "localhost"
     port: "5432"
     database: "abacum"
+  pandas:
+    file: "transactions.pkl"
 
 testing:
+  backend: "sqlalchemy"
   database:
     user: "abacumuser"
     password: "abacumpass"
     host: "localhost"
     port: "5432"
     database: "abacumtest"
+  pandas:
+    file: "test_transactions.pkl"

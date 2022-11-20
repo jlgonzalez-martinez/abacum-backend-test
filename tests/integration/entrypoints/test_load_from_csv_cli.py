@@ -4,7 +4,7 @@ from datetime import datetime
 import pytest
 from click.testing import CliRunner
 
-from config import TEST_RESOURCES
+from config import TEST_RESOURCES, settings
 from transactions.domain.models import Transaction
 from transactions.entrypoints.cli_application import load_transactions_from_csv
 from transactions.services.unit_of_work import SqlAlchemyUnitOfWork
@@ -29,6 +29,8 @@ class TestLoadFromCSVCLI:
 
     def test_load_from_csv_cli(self, csv_path, runner, uow):
         """Test the load_from_csv CLI command."""
+        settings.backend = "sqlalchemy"
+
         result = runner.invoke(load_transactions_from_csv, [csv_path])
         expected = [
             Transaction(

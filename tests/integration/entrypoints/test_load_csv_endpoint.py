@@ -4,7 +4,8 @@ from datetime import datetime
 import pytest
 from fastapi.testclient import TestClient
 
-from config import TEST_RESOURCES
+from config import TEST_RESOURCES, settings
+from transactions.bootstrap import bootstrap
 from transactions.domain.models import Transaction
 from transactions.entrypoints.fastapi_application import app
 from transactions.services.unit_of_work import SqlAlchemyUnitOfWork
@@ -29,6 +30,9 @@ class TestLoadCsvEndpoint:
 
     def test_load_csv_endpoint(self, client, csv_path, uow):
         """Test the load_csv endpoint."""
+        settings.backend = "sqlalchemy"
+        app.bus = bootstrap()
+
         response = client.post(
             "/transactions/load-csv", files={"file": open(csv_path, "rb")}
         )

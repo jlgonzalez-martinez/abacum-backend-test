@@ -9,4 +9,5 @@ settings = Dynaconf(
 )
 
 BASE_DIR = os.path.dirname(__file__)
+RESOURCES = os.path.join(BASE_DIR, "_resources")
 TEST_RESOURCES = os.path.join(BASE_DIR, "tests", "_resources")

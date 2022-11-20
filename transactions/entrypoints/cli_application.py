@@ -8,13 +8,12 @@ from transactions.domain.commands import LoadTransactionsFromCSV
 
 logger = logging.getLogger(__name__)
 
-bus = bootstrap()
-
 
 @click.command()
 @click.argument("filename", type=click.Path(exists=True))
 def load_transactions_from_csv(filename):
     """Load transactions from a CSV file."""
+    bus = bootstrap()
     with open(filename, "r") as f:
         bus.handle(LoadTransactionsFromCSV(f.readlines()))
 
