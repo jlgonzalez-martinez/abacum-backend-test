@@ -18,6 +18,7 @@ class CsvTransactionsLoaderService:
         self._uow = uow
 
     def __call__(self, cmd: "LoadTransactionsFromCSV"):
+        self._logger.info("Loading transactions from CSV file")
         with self._uow:
             csv_reader = csv.reader(cmd.csv_content, delimiter=",")
             _ = next(csv_reader)  # skip header
@@ -27,3 +28,4 @@ class CsvTransactionsLoaderService:
                 transaction = Transaction(date=date, account=account, amount=amount)
                 self._uow.transactions.add(transaction)
             self._uow.commit()
+        self._logger.info("Finish to load transactions")
