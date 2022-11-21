@@ -1,5 +1,5 @@
 default:
-  backend: "pandas"
+  backend: "sqlalchemy"
   database:
     user: "abacumuser"
     password: "abacumpass"
